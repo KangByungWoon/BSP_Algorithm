@@ -54,13 +54,6 @@ public class MapGenerator : MonoBehaviour
     {
         //0 = 비어있음, 1 = 방 테두리, 2 = 방사이 길, 3 = 방내부 블럭
         GenerateMap();
-        for (int i = 0; i < topRight.y; i++)
-        {
-            for (int j = 0; j < topRight.x; j++)
-            {
-                Debug.Log(map[i, j]);
-            }
-        }
     }
 
     void GenerateMap()
@@ -112,23 +105,24 @@ public class MapGenerator : MonoBehaviour
 
             if (!treeList[x].isDivided)
             {
-                for (int ry = treeList[x].roomBL.y; ry <= treeList[x].roomTR.y; ry++)
+                continue;
+            }
+            for (int ry = treeList[x].roomBL.y; ry <= treeList[x].roomTR.y; ry++)
+            {
+                for (int rx = treeList[x].roomBL.x; rx <= treeList[x].roomTR.x; rx++)
                 {
-                    for (int rx = treeList[x].roomBL.x; rx <= treeList[x].roomTR.x; rx++)
+                    if (rx == treeList[x].roomBL.x || rx == treeList[x].roomTR.x || ry == treeList[x].roomBL.y ||
+                        ry == treeList[x].roomTR.y) // 테두리는 벽이기떄문에 검사 해서 1로 설정
                     {
-                        if (rx == treeList[x].roomBL.x || rx == treeList[x].roomTR.x || ry == treeList[x].roomBL.y ||
-                            ry == treeList[x].roomTR.y) // 테두리는 벽이기떄문에 검사 해서 1로 설정
-                        {
-                            map[ry, rx] = 1;
-                        }
-                        else    // 테두리가 아니면 3으로 설정함
-                        {
-                            map[ry, rx] = 3;
-                        }
+                        map[ry, rx] = 1;
+                    }
+                    else    // 테두리가 아니면 3으로 설정함
+                    {
+                        map[ry, rx] = 3;
                     }
                 }
-                roomList.Add(treeList[x]);
             }
+            roomList.Add(treeList[x]);
         }
     }
 
@@ -257,15 +251,15 @@ public class MapGenerator : MonoBehaviour
         {
             for (int x = 0; x <= topRight.x; x++)
             {
-                if (map[y, x] == 2)
+                if (map[y, x] != 2)
+                    continue;
+                for (int xx = -1; xx <= 1; xx++)
                 {
-                    for (int xx = -1; xx <= 1; xx++)
+                    for (int yy = -1; yy <= 1; yy++)
                     {
-                        for (int yy = -1; yy <= 1; yy++)
-                        {
-                            if (map[y + yy, x + xx] == 0)
-                                map[y + yy, x + xx] = 1;
-                        }
+                        if (map[y + yy, x + xx] != 0)
+                            continue;
+                        map[y + yy, x + xx] = 1;
                     }
                 }
             }
